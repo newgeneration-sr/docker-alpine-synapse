@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+
+  synapse:
+    build: .
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=synapse
+
+      - SYNAPSE_ROOT_USER=root
+      - SYNAPSE_ROOT_PASSWORD=root
+
+      - SYNAPSE_NO_TLS=true 
+      - SYNAPSE_ENABLE_REGISTRATION=true
+      - SYNAPSE_CONFIG_DIR=/data
+      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+      - SYNAPSE_SERVER_NAME=localhost
+      - SYNAPSE_REPORT_STATS=yes
+      - SYNAPSE_TURN_URIS=stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302,stun3.l.google.com:19302,stun4.l.google.com:19302
+    ports:
+      - 8448:8448/tcp
+      - 8009:8009
+      - 8008:8008
+    depends_on:
+      - db
+
+  db:
+    image: dotriver/postgres
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+      - PSQL_USER=root
+      - PSQL_PASS=root
+      - PSQL_INITDB_ARGS=-E 'UTF8' --lc-collate='C' --lc-ctype='C'
+      - PGSQL_ROOT_ACCESS="all"
+      
+      - DB_0_NAME=synapse
+      - DB_0_PASS=synapse
+    volumes:
+      - ./schemas:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

@@ -1,0 +1,7 @@
+#!/bin/ash
+
+source /synapse/bin/activate
+
+sleep 20 && register_new_matrix_user -u {SYNAPSE_ROOT_USER} -p {SYNAPSE_ROOT_PASSWORD} -c {SYNAPSE_CONFIG_PATH} -a http://{SYNAPSE_SERVER_NAME}:8008 &
+
+python3 -B -m synapse.app.homeserver -c {SYNAPSE_CONFIG_PATH}

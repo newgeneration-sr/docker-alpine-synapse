@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv ash
+
+if [ "x$SYNAPSE_CONFIG_DIR" = "x" | "x$SYNAPSE_CONFIG_PATH" = "x" ]; then
+    SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    SYNAPSE_CONFIG_DIR=/data
+fi
+
+sed -i "s;{SYNAPSE_CONFIG_PATH};$SYNAPSE_CONFIG_PATH;g" /usr/local/bin/synapse-launcher
+sed -i "s;{SYNAPSE_ROOT_USER};$SYNAPSE_ROOT_USER;g" /usr/local/bin/synapse-launcher
+sed -i "s;{SYNAPSE_ROOT_PASSWORD};$SYNAPSE_ROOT_PASSWORD;g" /usr/local/bin/synapse-launcher
+sed -i "s;{SYNAPSE_SERVER_NAME};$SYNAPSE_SERVER_NAME;g" /usr/local/bin/synapse-launcher
+mkdir -p $SYNAPSE_CONFIG_DIR
+
+env /synapse/bin/generate_config_from_template.py
+
+echo 0 > /tmp/synapse

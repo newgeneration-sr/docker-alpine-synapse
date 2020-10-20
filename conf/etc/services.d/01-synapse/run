@@ -1,0 +1,5 @@
+#!/bin/sh
+NAME="SYNAPSE" 
+COMMAND="/usr/local/bin/synapse-launcher" 
+WAIT="/tmp/synapse"
+exec service-handler "$NAME" "$COMMAND" "$WAIT"
