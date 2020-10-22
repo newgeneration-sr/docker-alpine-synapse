@@ -11,6 +11,8 @@ sed -i "s;{SYNAPSE_ROOT_PASSWORD};$SYNAPSE_ROOT_PASSWORD;g" /usr/local/bin/synap
 sed -i "s;{SYNAPSE_SERVER_NAME};$SYNAPSE_SERVER_NAME;g" /usr/local/bin/synapse-launcher
 mkdir -p $SYNAPSE_CONFIG_DIR
 
+echo "127.0.0.1 $SYNAPSE_SERVER_NAME" >> /etc/hosts
+
 env /synapse/bin/generate_config_from_template.py
 
 echo 0 > /tmp/synapse
