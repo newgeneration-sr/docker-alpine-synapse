@@ -12,6 +12,7 @@ RUN apk --no-cache add python3 py3-pip py3-virtualenv jpeg-dev postgresql &&\
     pip3 install --upgrade psycopg2 &&\
     pip3 install --upgrade setuptools &&\
     pip3 install matrix-synapse &&\
+    pip3 install matrix-synapse-ldap3 &&\
     apk --purge del .build-deps
 
 ENV GOSU_VERSION 1.12

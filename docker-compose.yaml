@@ -4,12 +4,16 @@ services:
 
   synapse:
     build: .
-    restart: unless-stopped
     environment:
       - POSTGRES_PASSWORD=synapse
 
       - SYNAPSE_ROOT_USER=root
       - SYNAPSE_ROOT_PASSWORD=root
+
+      - SYNAPSE_LDAP_HOST=HOST
+      - SYNAPSE_LDAP_BASE_DN=BASEDN
+      - SYNAPSE_LDAP_BIND_PASS=PASSWORD
+      - SYNAPSE_LDAP_GROUP=GROUPS
 
       - SYNAPSE_NO_TLS=true 
       - SYNAPSE_ENABLE_REGISTRATION=true
@@ -22,6 +26,8 @@ services:
       - 8448:8448/tcp
       - 8009:8009
       - 8008:8008
+    volumes:
+      - synapse-data:/data
     depends_on:
       - db
 
@@ -32,11 +38,33 @@ services:
       - PSQL_USER=root
       - PSQL_PASS=root
       - PSQL_INITDB_ARGS=-E 'UTF8' --lc-collate='C' --lc-ctype='C'
-      - PGSQL_ROOT_ACCESS="all"
+      - PGSQL_ROOT_ACCESS=all
       
       - DB_0_NAME=synapse
       - DB_0_PASS=synapse
     volumes:
-      - ./schemas:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    
+  omnidb:
+    image: dotriver/omnidb
+    environment:
+      - OMNIDB_USER=root
+      - OMNIDB_PASS=root
+
+      - DB_TECH=postgresql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_NAME=postgres
+
+    ports:
+      - 8080:8080
+      - 25482:25482
+    depends_on:
+      - db
+
+volumes:
+    postgres-data:
+    synapse-data:
