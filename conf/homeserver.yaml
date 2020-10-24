@@ -4,8 +4,8 @@
 
 {% if not SYNAPSE_NO_TLS %}
 
-tls_certificate_path: "/data/{{ SYNAPSE_SERVER_NAME }}.tls.crt"
-tls_private_key_path: "/data/{{ SYNAPSE_SERVER_NAME }}.tls.key"
+tls_certificate_path: "{{ SYNAPSE_CONFIG_PATH }}/{{ SYNAPSE_SERVER_NAME }}.tls.crt"
+tls_private_key_path: "{{ SYNAPSE_CONFIG_PATH }}/{{ SYNAPSE_SERVER_NAME }}.tls.key"
 
 {% if SYNAPSE_ACME %}
 acme:
@@ -18,8 +18,8 @@ acme:
 ## Server ##
 
 server_name: "{{ SYNAPSE_SERVER_NAME }}"
-pid_file: /homeserver.pid
-web_client: False
+pid_file: "{{ SYNAPSE_CONFIG_PATH }}/homeserver.pid"
+web_client: false
 soft_file_limit: 0
 log_config: "{{ SYNAPSE_LOG_CONFIG }}"
 
@@ -29,7 +29,7 @@ listeners:
   {% if not SYNAPSE_NO_TLS %}
   -
     port: 8448
-    bind_addresses: ['::']
+    bind_addresses: ['::', '0.0.0.0']
     type: http
     tls: true
     x_forwarded: false
@@ -42,9 +42,9 @@ listeners:
 
   - port: 8008
     tls: false
-    bind_addresses: ['::']
+    bind_addresses: ['::', '0.0.0.0']
     type: http
-    x_forwarded: false
+    x_forwarded: true
 
     resources:
       - names: [client]
@@ -69,7 +69,7 @@ database:
 database:
   name: "sqlite3"
   args:
-    database: "/data/homeserver.db"
+    database: "{{ SYNAPSE_CONFIG_PATH }}/homeserver.db"
 {% endif %}
 
 ## Performance ##
@@ -88,8 +88,8 @@ federation_rc_concurrent: 3
 
 ## Files ##
 
-media_store_path: "/data/media"
-uploads_path: "/data/uploads"
+media_store_path: "{{ SYNAPSE_CONFIG_PATH }}/media"
+uploads_path: "{{ SYNAPSE_CONFIG_PATH }}/uploads"
 max_upload_size: "{{ SYNAPSE_MAX_UPLOAD_SIZE or "50M" }}"
 max_image_pixels: "32M"
 dynamic_thumbnails: false
@@ -112,7 +112,7 @@ thumbnail_sizes:
   height: 600
   method: scale
 
-url_preview_enabled: False
+url_preview_enabled: false
 max_spider_size: "10M"
 
 ## Captcha ##
@@ -120,37 +120,31 @@ max_spider_size: "10M"
 {% if SYNAPSE_RECAPTCHA_PUBLIC_KEY %}
 recaptcha_public_key: "{{ SYNAPSE_RECAPTCHA_PUBLIC_KEY }}"
 recaptcha_private_key: "{{ SYNAPSE_RECAPTCHA_PRIVATE_KEY }}"
-enable_registration_captcha: True
+enable_registration_captcha: true
 recaptcha_siteverify_api: "https://www.google.com/recaptcha/api/siteverify"
 {% else %}
 recaptcha_public_key: "YOUR_PUBLIC_KEY"
 recaptcha_private_key: "YOUR_PRIVATE_KEY"
-enable_registration_captcha: False
+enable_registration_captcha: false
 recaptcha_siteverify_api: "https://www.google.com/recaptcha/api/siteverify"
 {% endif %}
 
-## Turn ##
-
-{% if SYNAPSE_TURN_URIS %}
-turn_uris:
-{% for uri in SYNAPSE_TURN_URIS.split(',') %}    - "{{ uri }}"
-{% endfor %}
-turn_shared_secret: "{{ SYNAPSE_TURN_SECRET }}"
-turn_user_lifetime: "1h"
-turn_allow_guests: True
-{% else %}
-turn_uris: []
-turn_shared_secret: "YOUR_SHARED_SECRET"
-turn_user_lifetime: "1h"
-turn_allow_guests: True
-{% endif %}
 
 ## Registration ##
 
-enable_registration: {{ "True" if SYNAPSE_ENABLE_REGISTRATION else "False" }}
+{% if SYNAPSE_ENABLE_REGISTRATION  %}
+enable_registration: true
+{% else %}
+enable_registration: false
+{% endif %}
+
 registration_shared_secret: "{{ SYNAPSE_REGISTRATION_SHARED_SECRET }}"
 bcrypt_rounds: 12
-allow_guest_access: {{ "True" if SYNAPSE_ALLOW_GUEST else "False" }}
+{% if SYNAPSE_ALLOW_GUEST  %}
+allow_guest_access: true
+{% else %}
+allow_guest_access: false
+{% endif %}
 enable_group_creation: true
 
 # The list of identity servers trusted to verify third party
@@ -158,18 +152,18 @@ enable_group_creation: true
 #
 # Also defines the ID server which will be called when an account is
 # deactivated (one will be picked arbitrarily).
-trusted_third_party_id_servers:
-    - matrix.org
-    - vector.im
+# trusted_third_party_id_servers:
+#    - matrix.org
+#    - vector.im
 
 ## Metrics ###
 
-{% if SYNAPSE_REPORT_STATS.lower() == "yes" %}
-enable_metrics: True
-report_stats: True
+{% if SYNAPSE_REPORT_STATS %}
+enable_metrics: true
+report_stats: true
 {% else %}
-enable_metrics: False
-report_stats: False
+enable_metrics: false
+report_stats: false
 {% endif %}
 
 ## API Configuration ##
@@ -189,11 +183,12 @@ app_service_config_files: []
 {% endif %}
 
 macaroon_secret_key: "{{ SYNAPSE_MACAROON_SECRET_KEY }}"
-expire_access_token: False
-
+expire_access_token: false
+push:
+  include_content: false
 ## Signing Keys ##
 
-signing_key_path: "/data/{{ SYNAPSE_SERVER_NAME }}.signing.key"
+signing_key_path: "{{ SYNAPSE_CONFIG_PATH }}/{{ SYNAPSE_SERVER_NAME }}.signing.key"
 old_signing_keys: {}
 key_refresh_interval: "1d" # 1 Day.
 
@@ -207,3 +202,19 @@ perspectives:
 
 password_config:
    enabled: true
+
+## Turn ##
+
+{% if SYNAPSE_TURN_URIS %}
+turn_uris:
+{% for uri in SYNAPSE_TURN_URIS.split(',') %}    - "{{ uri }}"
+{% endfor %}
+turn_shared_secret: "{{ SYNAPSE_TURN_SECRET }}"
+turn_user_lifetime: "1h"
+turn_allow_guests: true
+{% else %}
+turn_uris: []
+turn_shared_secret: "YOUR_SHARED_SECRET"
+turn_user_lifetime: "1h"
+turn_allow_guests: true
+{% endif %}
