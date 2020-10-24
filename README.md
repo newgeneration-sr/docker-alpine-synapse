@@ -7,6 +7,12 @@
 - SYNAPSE_ROOT_USER=root (auto create root user on the server)
 - SYNAPSE_ROOT_PASSWORD=root
 
+(base configuration of LDAP)
+- SYNAPSE_LDAP_HOST=HOST
+- SYNAPSE_LDAP_BASE_DN=BASEDN
+- SYNAPSE_LDAP_BIND_PASS=PASSWORD
+- SYNAPSE_LDAP_GROUP=GROUPS
+
 (basic configuration flags of the homeserver synapse)
 - SYNAPSE_NO_TLS=true 
 - SYNAPSE_ENABLE_REGISTRATION=true

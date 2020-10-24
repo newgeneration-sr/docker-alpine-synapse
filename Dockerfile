@@ -7,7 +7,7 @@ RUN apk --no-cache add sqlite python3 py3-pip py3-virtualenv jpeg-dev postgresql
                                   make libevent-dev zlib-dev \
 	&& virtualenv -p python3 /synapse \
 	&& source /synapse/bin/activate \
-	&& pip3 install --upgrade pip psycopg2 setuptools matrix-synapse \
+	&& pip3 install --upgrade pip psycopg2 setuptools matrix-synapse matrix-synapse-ldap3  \
 	&& apk --purge del .build-deps
 
 RUN apk add --no-cache --virtual .gosu-deps \

@@ -10,7 +10,7 @@ sed -i "s;{SYNAPSE_CONFIG_PATH};$SYNAPSE_CONFIG_PATH;g" /usr/local/bin/synapse-l
 
 echo "127.0.0.1 $SYNAPSE_SERVER_NAME" >> /etc/hosts
 
-[ ! -d $SYNAPSE_CONFIG_PATH ] && mkdir -p $SYNAPSE_CONFIG_DIR
+[ ! -d $SYNAPSE_CONFIG_DIR ] && mkdir -p $SYNAPSE_CONFIG_DIR
 
 env /synapse/bin/generate_config_from_template.py
 /synapse/bin/register_new_matrix_user -u $SYNAPSE_ROOT_USER -p $SYNAPSE_ROOT_PASSWORD -c $SYNAPSE_CONFIG_PATH -a http://$SYNAPSE_SERVER_NAME:8008  

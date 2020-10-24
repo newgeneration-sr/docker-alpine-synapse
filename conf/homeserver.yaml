@@ -147,6 +147,26 @@ allow_guest_access: false
 {% endif %}
 enable_group_creation: true
 
+
+{% if SYNAPSE_LDAP_HOST %}
+password_providers: 
+ - module: "ldap_auth_provider.LdapAuthProvider"
+   config:
+    enabled: true
+    mode: "search"
+    uri: "ldap://{{ SYNAPSE_LDAP_HOST }}:389"
+    start_tls: false
+    base: "{{ SYNAPSE_LDAP_BASE_DN }}"
+    attributes: 
+        uid: "{{ SYNAPSE_LDAP_UID or "uid" }}"
+        mail: "{{ SYNAPSE_LDAP_MAIL or "email" }}"
+        name: "{{ SYNAPSE_LDAP_NAME or "givenName" }}"
+    bind_dn: "cn=admin,{{ SYNAPSE_LDAP_BASE_DN }}"
+    bind_password: "{{ SYNAPSE_LDAP_BIND_PASS }}"
+    filter: "(memberOf={{ SYNAPSE_LDAP_GROUP }})"
+{% endif %}
+
+
 # The list of identity servers trusted to verify third party
 # identifiers by this server.
 #
