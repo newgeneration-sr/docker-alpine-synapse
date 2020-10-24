@@ -13,6 +13,8 @@ echo "127.0.0.1 $SYNAPSE_SERVER_NAME" >> /etc/hosts
 [ ! -d $SYNAPSE_CONFIG_DIR ] && mkdir -p $SYNAPSE_CONFIG_DIR
 
 env /synapse/bin/generate_config_from_template.py
-/synapse/bin/register_new_matrix_user -u $SYNAPSE_ROOT_USER -p $SYNAPSE_ROOT_PASSWORD -c $SYNAPSE_CONFIG_PATH -a http://$SYNAPSE_SERVER_NAME:8008  
-
+source /synapse/bin/activate
+synctl start $SYNAPSE_CONFIG_PATH
+register_new_matrix_user -u $SYNAPSE_ROOT_USER -p $SYNAPSE_ROOT_PASSWORD -c $SYNAPSE_CONFIG_PATH -a http://$SYNAPSE_SERVER_NAME:8008 
+synctl stop $SYNAPSE_CONFIG_PATH
 echo 0 > /tmp/synapse

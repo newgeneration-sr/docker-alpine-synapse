@@ -1,7 +1,10 @@
 version: '3.1'
 
 services:
-
+  element:
+    image: vectorim/riot-web
+    ports:
+      - 8080:80
   synapse:
     build: .
     environment:
@@ -52,7 +55,6 @@ services:
     environment:
       - OMNIDB_USER=root
       - OMNIDB_PASS=root
-
       - DB_TECH=postgresql
       - DB_HOST=db
       - DB_PORT=5432
@@ -60,7 +62,6 @@ services:
       - DB_NAME=postgres
 
     ports:
-      - 8080:8080
       - 25482:25482
     depends_on:
       - db

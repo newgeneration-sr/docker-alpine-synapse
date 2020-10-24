@@ -2,12 +2,12 @@
 
 ## TLS ##
 
-{% if not SYNAPSE_NO_TLS %}
+{% if not SYNAPSE_NO_TLS.lower() in ['yes', 'true', '1'] %}
 
-tls_certificate_path: "{{ SYNAPSE_CONFIG_PATH }}/{{ SYNAPSE_SERVER_NAME }}.tls.crt"
-tls_private_key_path: "{{ SYNAPSE_CONFIG_PATH }}/{{ SYNAPSE_SERVER_NAME }}.tls.key"
+tls_certificate_path: "{{ SYNAPSE_CONFIG_DIR }}/{{ SYNAPSE_SERVER_NAME }}.tls.crt"
+tls_private_key_path: "{{ SYNAPSE_CONFIG_DIR }}/{{ SYNAPSE_SERVER_NAME }}.tls.key"
 
-{% if SYNAPSE_ACME %}
+{% if SYNAPSE_ACME.lower() in ['yes', 'true', '1'] %}
 acme:
     enabled: true
     port: 8009
@@ -18,7 +18,7 @@ acme:
 ## Server ##
 
 server_name: "{{ SYNAPSE_SERVER_NAME }}"
-pid_file: "{{ SYNAPSE_CONFIG_PATH }}/homeserver.pid"
+pid_file: "{{ SYNAPSE_CONFIG_DIR }}/homeserver.pid"
 web_client: false
 soft_file_limit: 0
 log_config: "{{ SYNAPSE_LOG_CONFIG }}"
@@ -26,7 +26,7 @@ log_config: "{{ SYNAPSE_LOG_CONFIG }}"
 ## Ports ##
 
 listeners:
-  {% if not SYNAPSE_NO_TLS %}
+  {% if not SYNAPSE_NO_TLS.lower() in ['yes', 'true', '1'] %}
   -
     port: 8448
     bind_addresses: ['::', '0.0.0.0']
@@ -69,7 +69,7 @@ database:
 database:
   name: "sqlite3"
   args:
-    database: "{{ SYNAPSE_CONFIG_PATH }}/homeserver.db"
+    database: "{{ SYNAPSE_CONFIG_DIR }}/homeserver.db"
 {% endif %}
 
 ## Performance ##
@@ -88,8 +88,8 @@ federation_rc_concurrent: 3
 
 ## Files ##
 
-media_store_path: "{{ SYNAPSE_CONFIG_PATH }}/media"
-uploads_path: "{{ SYNAPSE_CONFIG_PATH }}/uploads"
+media_store_path: "{{ SYNAPSE_CONFIG_DIR }}/media"
+uploads_path: "{{ SYNAPSE_CONFIG_DIR }}/uploads"
 max_upload_size: "{{ SYNAPSE_MAX_UPLOAD_SIZE or "50M" }}"
 max_image_pixels: "32M"
 dynamic_thumbnails: false
@@ -132,7 +132,7 @@ recaptcha_siteverify_api: "https://www.google.com/recaptcha/api/siteverify"
 
 ## Registration ##
 
-{% if SYNAPSE_ENABLE_REGISTRATION  %}
+{% if SYNAPSE_ENABLE_REGISTRATION.lower() in ['yes', 'true', '1'] %}
 enable_registration: true
 {% else %}
 enable_registration: false
@@ -140,7 +140,7 @@ enable_registration: false
 
 registration_shared_secret: "{{ SYNAPSE_REGISTRATION_SHARED_SECRET }}"
 bcrypt_rounds: 12
-{% if SYNAPSE_ALLOW_GUEST  %}
+{% if SYNAPSE_ALLOW_GUEST.lower() in ['yes', 'true', '1']  %}
 allow_guest_access: true
 {% else %}
 allow_guest_access: false
@@ -178,7 +178,7 @@ password_providers:
 
 ## Metrics ###
 
-{% if SYNAPSE_REPORT_STATS %}
+{% if SYNAPSE_REPORT_STATS.lower() in ['yes', 'true', '1'] %}
 enable_metrics: true
 report_stats: true
 {% else %}
@@ -208,7 +208,7 @@ push:
   include_content: false
 ## Signing Keys ##
 
-signing_key_path: "{{ SYNAPSE_CONFIG_PATH }}/{{ SYNAPSE_SERVER_NAME }}.signing.key"
+signing_key_path: "{{ SYNAPSE_CONFIG_DIR }}/{{ SYNAPSE_SERVER_NAME }}.signing.key"
 old_signing_keys: {}
 key_refresh_interval: "1d" # 1 Day.
 
