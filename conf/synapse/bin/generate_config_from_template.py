@@ -70,19 +70,20 @@ def generate_config_from_template(config_dir, config_path, environ, ownership):
         os.mkdir(config_dir)
 
     # Convert SYNAPSE_NO_TLS to boolean if exists
-    if "SYNAPSE_NO_TLS" in environ:
-        tlsanswerstring = str.lower(environ["SYNAPSE_NO_TLS"])
-        if tlsanswerstring in ("true", "on", "1", "yes"):
-            environ["SYNAPSE_NO_TLS"] = True
-        else:
-            if tlsanswerstring in ("false", "off", "0", "no"):
-                environ["SYNAPSE_NO_TLS"] = False
+    for e in ["SYNAPSE_NO_TLS", "SYNAPSE_ACME", "SYNAPSE_ENABLE_REGISTRATION", "SYNAPSE_ALLOW_GUEST", "SYNAPSE_REPORT_STATS", "SYNAPSE_ALLOW_GROUP_CREATION"]:
+        if e in environ:
+            tlsanswerstring = str(environ[e]).lower()
+            if tlsanswerstring in ("true", "on", "1", "yes"):
+                environ[e] = True
             else:
-                error(
-                    'Environment variable "SYNAPSE_NO_TLS" found but value "'
-                    + tlsanswerstring
-                    + '" unrecognized; exiting.'
-                )
+                if tlsanswerstring in ("false", "off", "0", "no"):
+                    environ[e] = False
+                else:
+                    error(
+                        'Environment variable '+e+' found but value "'
+                        + tlsanswerstring
+                        + '" unrecognized; exiting.'
+                    )
 
     if "SYNAPSE_LOG_CONFIG" not in environ:
         environ["SYNAPSE_LOG_CONFIG"] = config_dir + "/log.config"

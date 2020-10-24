@@ -2,12 +2,12 @@
 
 ## TLS ##
 
-{% if not str(SYNAPSE_NO_TLS).lower() in ['yes', 'true', '1'] %}
+{% if not SYNAPSE_NO_TLS %}
 
 tls_certificate_path: "{{ SYNAPSE_CONFIG_DIR }}/{{ SYNAPSE_SERVER_NAME }}.tls.crt"
 tls_private_key_path: "{{ SYNAPSE_CONFIG_DIR }}/{{ SYNAPSE_SERVER_NAME }}.tls.key"
 
-{% if str(SYNAPSE_ACME).lower() in ['yes', 'true', '1'] %}
+{% if SYNAPSE_ACME %}
 acme:
     enabled: true
     port: 8009
@@ -26,7 +26,7 @@ log_config: "{{ SYNAPSE_LOG_CONFIG }}"
 ## Ports ##
 
 listeners:
-  {% if not str(SYNAPSE_NO_TLS).lower() in ['yes', 'true', '1'] %}
+  {% if not SYNAPSE_NO_TLS %}
   -
     port: 8448
     bind_addresses: ['::', '0.0.0.0']
@@ -132,7 +132,7 @@ recaptcha_siteverify_api: "https://www.google.com/recaptcha/api/siteverify"
 
 ## Registration ##
 
-{% if str(SYNAPSE_ENABLE_REGISTRATION).lower() in ['yes', 'true', '1'] %}
+{% if SYNAPSE_ENABLE_REGISTRATION %}
 enable_registration: true
 {% else %}
 enable_registration: false
@@ -140,12 +140,16 @@ enable_registration: false
 
 registration_shared_secret: "{{ SYNAPSE_REGISTRATION_SHARED_SECRET }}"
 bcrypt_rounds: 12
-{% if str(SYNAPSE_ALLOW_GUEST).lower() in ['yes', 'true', '1']  %}
+{% if SYNAPSE_ALLOW_GUEST %}
 allow_guest_access: true
 {% else %}
 allow_guest_access: false
 {% endif %}
+{% if SYNAPSE_ALLOW_GROUP_CREATION %}
 enable_group_creation: true
+{% else %}
+enable_group_creation: false
+{% endif %}
 
 
 {% if SYNAPSE_LDAP_HOST %}
@@ -178,7 +182,7 @@ password_providers:
 
 ## Metrics ###
 
-{% if str(SYNAPSE_REPORT_STATS).lower() in ['yes', 'true', '1'] %}
+{% if SYNAPSE_REPORT_STATS %}
 enable_metrics: true
 report_stats: true
 {% else %}
@@ -225,16 +229,14 @@ password_config:
 
 ## Turn ##
 
+turn_user_lifetime: "1h"
+turn_allow_guests: true
 {% if SYNAPSE_TURN_URIS %}
 turn_uris:
 {% for uri in SYNAPSE_TURN_URIS.split(',') %}    - "{{ uri }}"
 {% endfor %}
 turn_shared_secret: "{{ SYNAPSE_TURN_SECRET }}"
-turn_user_lifetime: "1h"
-turn_allow_guests: true
 {% else %}
 turn_uris: []
 turn_shared_secret: "YOUR_SHARED_SECRET"
-turn_user_lifetime: "1h"
-turn_allow_guests: true
 {% endif %}
