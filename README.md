@@ -1,6 +1,6 @@
 ![docker build automated](https://img.shields.io/docker/cloud/automated/dotriver/synapse)
 ![docker build status](https://img.shields.io/docker/cloud/build/dotriver/synapse)
-![docker build status](https://img.shields.io/docker/cloud/pulls/dotriver/synapse)
+![docker build status](https://img.shields.io/docker/pulls/dotriver/synapse)
 
 # Synapse Matrix on Alpine Linux + S6 Overlay
 
